@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  traefik:
+    image: traefik:v2.9
+    container_name: traefik
+    restart: always
+    command:
+      # Docker configuration
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      # Configure entrypoints
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      # SSL configuration
+      - "--certificatesresolvers.letsencryptresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencryptresolver.acme.email=alexmarcaureln@gmail.com"
+      - "--certificatesresolvers.letsencryptresolver.acme.storage=/letsencrypt/acme.json"
+      # Enable dashboard
+      - "--api.dashboard=true"
+      # Install plugins
+      - "--experimental.plugins.cache-plugin.modulename=github.com/traefik/plugin-simplecache"
+      - "--experimental.plugins.cache-plugin.version=v0.2.1"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencryptresolver"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.middlewares=dashboard-auth"
+      - "traefik.http.middlewares.dashboard-auth.basicauth.users=$TRAEFIK_DASHBOARD_USERS"
+      - "traefik.http.middlewares.cache.plugin.cache-plugin.path=/tmp"
+      - "traefik.http.middlewares.ratelimit.ratelimit.average=1000"
+      - "traefik.http.middlewares.ratelimit.ratelimit.period=1m"
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  pocketbase:
+    build: pocketbase
+    container_name: pocketbase
+    restart: always
+    volumes:
+      - ./pocketbase/migrations:/pb/migrations
+      - ./pocketbase/data:/pb/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pocketbase.rule=Host(`api.localhost`)"
+      - "traefik.http.routers.pocketbase.entrypoints=websecure"
+      - "traefik.http.routers.pocketbase.tls.certresolver=letsencryptresolver"
+      - "traefik.http.routers.pocketbase.middlewares=cache,ratelimit"
+    depends_on:
+      - traefik
+
+volumes:
+  letsencrypt:
+
+
+networks:
+  default:
+    name: traefik-net
