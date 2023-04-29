@@ -16,7 +16,7 @@ services:
       - "--entrypoints.websecure.address=:443"
       # SSL configuration
       - "--certificatesresolvers.letsencryptresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.letsencryptresolver.acme.email=alexmarcaureln@gmail.com"
+      - "--certificatesresolvers.letsencryptresolver.acme.email=${ACME_EMAIL}"
       - "--certificatesresolvers.letsencryptresolver.acme.storage=/letsencrypt/acme.json"
       # Enable dashboard
       - "--api.dashboard=true"
