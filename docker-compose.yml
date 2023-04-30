@@ -32,8 +32,7 @@ services:
       - "traefik.http.routers.dashboard.middlewares=dashboard-auth"
       - "traefik.http.middlewares.dashboard-auth.basicauth.users=$TRAEFIK_DASHBOARD_USERS"
       - "traefik.http.middlewares.cache.plugin.cache-plugin.path=/tmp"
-      - "traefik.http.middlewares.ratelimit.ratelimit.average=1000"
-      - "traefik.http.middlewares.ratelimit.ratelimit.period=1m"
+      - "traefik.http.middlewares.ratelimit.ratelimit.average=100"
     ports:
       - 80:80
       - 443:443
