@@ -50,7 +50,7 @@ services:
       - ./pocketbase/data:/pb/data
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.pocketbase.rule=Host(`api.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.pocketbase.rule=Host(`pb.${DOMAIN_NAME}`)"
       - "traefik.http.routers.pocketbase.entrypoints=websecure"
       - "traefik.http.routers.pocketbase.tls.certresolver=letsencryptresolver"
       - "traefik.http.routers.pocketbase.middlewares=cache,ratelimit"
