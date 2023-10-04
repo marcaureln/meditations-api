@@ -47,6 +47,7 @@ services:
     restart: always
     volumes:
       - ./pocketbase/migrations:/pb/migrations
+      - ./pocketbase/hooks:/pb/hooks
       - ./pocketbase/data:/pb/data
     labels:
       - "traefik.enable=true"
