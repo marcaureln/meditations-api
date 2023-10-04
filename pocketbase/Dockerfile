@@ -17,4 +17,4 @@ COPY ./hooks ./hooks
 
 EXPOSE 8090
 
-CMD ["pocketbase", "serve", "--http=0.0.0.0:8090", "--dir=/pb/data", "--migrationsDir=/pb/migrations", "--hooksDir=/pb/hooks" ]
+CMD ["./pocketbase", "serve", "--http=0.0.0.0:8090", "--dir=/pb/data", "--migrationsDir=/pb/migrations", "--hooksDir=/pb/hooks" ]
