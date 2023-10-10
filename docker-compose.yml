@@ -45,6 +45,8 @@ services:
     build: pocketbase
     container_name: pocketbase
     restart: always
+    depends_on:
+      - traefik
     volumes:
       - ./pocketbase/migrations:/pb/migrations
       - ./pocketbase/hooks:/pb/hooks
@@ -55,8 +57,18 @@ services:
       - "traefik.http.routers.pocketbase.entrypoints=websecure"
       - "traefik.http.routers.pocketbase.tls.certresolver=letsencryptresolver"
       - "traefik.http.routers.pocketbase.middlewares=cache,ratelimit"
+
+  website:
+    image: ghcr.io/marcaureln/meditations-www
+    container_name: website
+    restart: always
     depends_on:
       - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.website.rule=Host(`${DOMAIN_NAME}, www.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.website.entrypoints=websecure"
+      - "traefik.http.routers.website.tls.certresolver=letsencryptresolver"
 
 volumes:
   letsencrypt:
