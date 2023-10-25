@@ -4,7 +4,7 @@ import multipart from '@fastify/multipart';
 import axios from 'axios';
 import { decode } from 'jsonwebtoken';
 
-const { API_BASE_URL, HOST, PORT, NODE_ENV } = process.env;
+const { API_BASE_URL, HOST, PORT, NODE_ENV, REQUEST_WAIT_TIME } = process.env;
 
 const fastify = Fastify({
     logger: NODE_ENV === 'development',
@@ -43,7 +43,7 @@ fastify.post('/', async function handler(request, reply) {
     setTimeout(() => {
         reply.code(202);
         reply.send({ message: 'Import in progress', imported, failed, submitted: json.length });
-    }, 5000);
+    }, REQUEST_WAIT_TIME ?? 1000);
 
     for (const item of json) {
         const { content, author, source, notes } = item;
