@@ -1,7 +1,7 @@
 {
-  "name": "import",
+  "name": "meditations-fn-import",
   "version": "1.0.0",
-  "description": "",
+  "description": "Meditations's app quotes import API.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
