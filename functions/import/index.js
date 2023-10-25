@@ -19,7 +19,11 @@ fastify.get('/', async function handler(_, __) {
 fastify.post('/', async function handler(request, reply) {
     const pocketbaseEndpoint = new URL('/api/collections/quotes/records', API_BASE_URL);
     const apiToken = request.headers.authorization;
-    const { id: userId } = decode(apiToken);
+    let userId;
+
+    try {
+        userId = decode(apiToken)?.id;
+    } catch { }
 
     if (!apiToken || !userId) {
         reply.code(401);
